@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mzaf VR Walkthrough</title>
+<style>
+:root { --matcha:#809671; --matcha-d:#6d8360; --almond:#E5E0D8; --carob:#725C3A; --ink:#2c2620; --paper:#F2EEE7; --mute:#7a7062; }
+html, body { height: 100%; margin: 0; background: #d9d4cb; overflow: hidden; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); }
+#stage { position: fixed; inset: 0; }
+#stage canvas { display: block; touch-action: none; }
+.bar { position: fixed; top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right)); display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; pointer-events: none; }
+.brand { pointer-events: auto; background: rgba(242,238,231,.92); border-radius: 14px; padding: 10px 16px; box-shadow: 0 4px 18px rgba(44,38,32,.12); }
+.brand b { font-weight: 800; letter-spacing: 1px; color: var(--carob); }
+.brand span { color: var(--mute); font-size: 13px; display: block; margin-top: 2px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; pointer-events: auto; }
+button, label.btn { font: 600 14px/1 inherit; font-family: inherit; border: 0; border-radius: 12px; padding: 12px 16px; cursor: pointer; background: rgba(242,238,231,.95); color: var(--ink); box-shadow: 0 4px 18px rgba(44,38,32,.12); }
+button:hover, label.btn:hover { background: #fff; }
+button:focus-visible, label.btn:focus-within { outline: 3px solid var(--matcha); outline-offset: 2px; }
+#btn-vr { background: var(--matcha); color: #fff; }
+#btn-vr:hover { background: var(--matcha-d); }
+#btn-vr:disabled { background: #a9a295; cursor: help; }
+#file { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.hint { position: fixed; bottom: max(12px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: rgba(44,38,32,.78); color: #f2eee7; font-size: 13px; padding: 9px 14px; border-radius: 12px; max-width: calc(100% - 32px); text-align: center; pointer-events: none; }
+#toast { position: fixed; top: 92px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 12px; font-size: 14px; max-width: calc(100% - 32px); box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+#check { position: fixed; top: 84px; right: max(12px, env(safe-area-inset-right)); width: min(400px, calc(100% - 24px)); max-height: calc(100% - 190px); overflow: auto; background: rgba(242,238,231,.97); border-radius: 16px; box-shadow: 0 8px 30px rgba(44,38,32,.22); padding: 14px 16px 16px; font-size: 13px; line-height: 1.4; }
+#check header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+#check header b { font-size: 16px; color: var(--carob); } #check header span { display: block; color: var(--mute); font-size: 12px; word-break: break-all; }
+#check header button { box-shadow: none; padding: 4px 10px; font-size: 20px; background: transparent; }
+#check .sum { display: flex; gap: 6px; margin: 10px 0 4px; } #check .sum em { font-style: normal; font-weight: 700; padding: 4px 10px; border-radius: 99px; font-size: 12px; }
+#check em.e { background: #f3d3cc; color: #8c2a17; } #check em.w { background: #f4e4c4; color: #7a5410; } #check em.o { background: #dbe5d3; color: #3f5634; }
+#check h4 { margin: 14px 0 6px; font-size: 12px; letter-spacing: .6px; text-transform: uppercase; color: var(--mute); }
+#check ul { margin: 0; padding: 0; list-style: none; } #check .note { margin: 0 0 6px; color: var(--mute); }
+#check ul.auto li, #check ul.mono li { padding: 3px 0; border-bottom: 1px solid rgba(114,92,58,.12); } #check ul.mono li { font-size: 12px; }
+#check .items li { display: flex; gap: 9px; padding: 7px 0; border-bottom: 1px solid rgba(114,92,58,.12); }
+#check .items small { display: block; color: var(--mute); margin-top: 2px; } #check .items b { font-weight: 600; }
+#check .dot { flex: 0 0 10px; height: 10px; border-radius: 50%; margin-top: 4px; } #check .error .dot { background: #c2452d; } #check .warn .dot { background: #d79b2c; } #check .ok .dot { background: var(--matcha); }
+#check details { margin-top: 6px; } #check summary { cursor: pointer; font-weight: 600; }
+[hidden] { display: none !important; }
+@media (max-width: 640px) { .brand span { display: none; } button, label.btn { padding: 10px 12px; font-size: 13px; } }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div class="bar">
+  <div class="brand"><b>MZAF</b> VR Walkthrough<span id="title-sub">Sample kitchen &amp; living</span></div>
+  <div class="actions">
+    <button id="btn-menu" type="button">Finishes &amp; options</button>
+    <label class="btn" for="file">Open SketchUp export<input id="file" type="file" multiple accept=".fbx,.dae,.glb,.gltf,.obj,.bin,.jpg,.jpeg,.png"></label>
+    <button id="btn-light" type="button" hidden>Realistic light: On</button>
+    <button id="btn-check" type="button" hidden>Model check</button>
+    <button id="btn-demo" type="button">Sample room</button>
+    <button id="btn-vr" type="button" disabled>Checking VR…</button>
+  </div>
+</div>
+<div class="hint">Drag to look · W A S D to walk · Click floor to move · Click doors and drawers to open · Click walls, cabinets or sofa to change · Right-click floor for tiles</div>
+<div id="toast" hidden></div>
+<aside id="check" hidden aria-label="Model check"></aside>
+<script>window.DEMO_BAKED = { glb: "demo_baked.glb", lightmap: "demo_lightmap.png" }; window.DEMO_PANOS = { kitchen: "photospot_kitchen.jpg" };</script>
+<script src="app.js"></script>
+</body>
+</html>
